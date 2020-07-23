@@ -62,4 +62,5 @@ def get_paper_idx_list(subject):
     paper_idx_list = []
 
     for a_tag in soup.find_all('a', title="Abstract"):
-        paper_idx_list.append(a_tag.get_text())
+        paper_idx_list.append(a_tag.get_text().replace("arXiv:", ""))
+
