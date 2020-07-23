@@ -1,7 +1,8 @@
 from typing import List
 import re
 from datetime import datetime
-from exception.exception import ArticleFormatException
+from arxiv_exception import ArticleFormatException
+
 
 MONTH_MAP = {
     "Jan": 1,
@@ -18,6 +19,7 @@ MONTH_MAP = {
     "Dec": 12
 }
 
+
 class Article(object):
     """
     Class for Article
@@ -26,6 +28,7 @@ class Article(object):
                  paper_id: str,  # arXiv identifier, such as 2007.10866
                  title: str,  # article title, string type
                  authors: List[str],  # article authors, a list of authors
+                 abstract: str, # abstract
                  submitDate: str,  # such as "21 Jul 2020"
                  subjects: List[str],  # Subject, such as Computation and Language (cs.CL)
                  comments: str = None,  # Comments
@@ -35,6 +38,7 @@ class Article(object):
         self.paper_id = paper_id
         self.title = title
         self.authors = authors
+        self.abstract = abstract
         self.submitDate = formatSubmitDate(submitDate)
         self.comments = comments
         self.subjects = subjects
@@ -51,6 +55,11 @@ class Article(object):
                 or re.search(idx_pattern, self.paper_id) is None:
             raise ArticleFormatException("idx")
 
+        # validate abstract params
+        if self.abstract is None:
+            raise ArticleFormatException("Abstract")
+
+        # validate subjects params
         if len(self.subjects) <= 1:
             raise ArticleFormatException("Subjects")
 
@@ -60,7 +69,6 @@ class Article(object):
 
         if idx_month != self.submitDate.month or idx_year != self.submitDate.year:
             raise ArticleFormatException("SubmitDate")
-
 
     @staticmethod
     def formatSubmitDate(submitdate):
@@ -77,4 +85,3 @@ class Article(object):
             return datetime(year=int(year_str), month=MONTH_MAP[month_str], day=int(day_str))
         else:
             return None
-    
