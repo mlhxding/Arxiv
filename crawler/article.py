@@ -54,6 +54,14 @@ class Article(object):
         if len(self.subjects) <= 1:
             raise ArticleFormatException("Subjects")
 
+        # validate article id match submit date
+        idx_year = int(self.paper_id[:4])
+        idx_month = int(self.paper_id[-5:])
+
+        if idx_month != self.submitDate.month or idx_year != self.submitDate.year:
+            raise ArticleFormatException("SubmitDate")
+
+
     @staticmethod
     def formatSubmitDate(submitdate):
         """
@@ -64,6 +72,9 @@ class Article(object):
 
         assert isinstance(submitdate, str)
 
-        [day_str, month_str, year_str] = submitdate.split()
-
-        
+        if len(submitdate.split()) == 3:
+            [day_str, month_str, year_str] = submitdate.split()
+            return datetime(year=int(year_str), month=MONTH_MAP[month_str], day=int(day_str))
+        else:
+            return None
+    
