@@ -21,8 +21,17 @@ MONTH_MAP = {
 
 
 class Article(object):
-    """
-    Class for Article
+    """Class for Article
+
+    Attributes:
+        paper_id: str, arXiv identifier, for example: 2007.10866
+        title: str, article title, string type
+        authors: list of string, article authors, list of authors
+        abstract: str, abstract
+        submitDate: str, for example: "21 Jul 2020"
+        subjects: list of str, Subject, for example: Computation and Language (cs.CL)
+        comments: str, default None,  Comments
+        journal_ref: str, default None,  Journal reference
     """
     def __init__(self,
                  paper_id: str,  # arXiv identifier, such as 2007.10866
@@ -47,6 +56,9 @@ class Article(object):
         self.validateParams()
 
     def validateParams(self):
+        """
+        validate correctness for input params
+        """
 
         # validate article idx params
         idx_pattern = r"^\d{4}\.\d{5}$"

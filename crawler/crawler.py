@@ -1,9 +1,9 @@
 import requests
+import re
 from bs4 import BeautifulSoup
+from crawler.article import Article
 from arxiv_exception import SubjectNotFoundError
 
-
-base_url = "https://arxiv.org/list/%s/pastweek?skip=0&show=1000"
 
 # computer science subjects
 SUBJECT_MAP = {
@@ -50,6 +50,16 @@ SUBJECT_MAP = {
 }
 
 def get_paper_idx_list(subject):
+    """extract all the paper_idx from the subject show page
+    
+    Args:
+        subject: element of SUBJECT_MAP, only support Computer Science now
+
+    Returns:
+        List of paper_idx, for example ["2007.10534", "2007.10712", "2007.10633"]
+    """
+
+    base_url = "https://arxiv.org/list/%s/pastweek?skip=0&show=1000"
 
     if subject not in SUBJECT_MAP:
         raise SubjectNotFoundError()
@@ -61,6 +71,46 @@ def get_paper_idx_list(subject):
 
     paper_idx_list = []
 
-    for a_tag in soup.find_all('a', title="Abstract"):
-        paper_idx_list.append(a_tag.get_text().replace("arXiv:", ""))
+    abstract_tag = soup.find_all('a', title="Abstract")
 
+    assert abstract_tag is not None
+
+    """
+    Example of abstract_tag:
+    <a href="/abs/2007.10830" title="Abstract">arXiv:2007.10830</a>
+    """
+
+    try:
+        for a_tag in abstract_tag:
+            paper_idx_list.append(a_tag.get_text().replace("arXiv:", ""))
+    except Exception as e:
+        pass
+
+    return paper_idx_list
+
+def get_article_info(paper_idx: str) -> Article:
+    """extract article details from abstract page
+
+    get all the article info, such as title, authors, abstract, subject,
+    comments, et.al from abstract page
+
+    Args:
+        paper_idx: str. Example: 2007.10830
+
+    Returns:
+        article: instance of Article class.
+
+    Raise:
+        TypeError: param paper_idx not in the right type
+    """
+
+    # validate article idx params
+    idx_pattern = r"^\d{4}\.\d{5}$"
+
+    if not isinstance(paper_id, str) or len(paper_id) != 10 \
+            or re.search(idx_pattern, self.paper_id) is None:
+        raise TypeError
+
+    abstract_url = "https://arxiv.org/abs/" + paper_idx
+
+    
