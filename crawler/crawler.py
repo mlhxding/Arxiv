@@ -107,8 +107,8 @@ def get_article_info(paper_idx: str) -> Article:
     # validate article idx params
     idx_pattern = r"^\d{4}\.\d{5}$"
 
-    if not isinstance(paper_id, str) or len(paper_id) != 10 \
-            or re.search(idx_pattern, self.paper_id) is None:
+    if not isinstance(paper_idx, str) or len(paper_idx) != 10 \
+            or re.search(idx_pattern, paper_idx) is None:
         raise TypeError
 
     abstract_url = "https://arxiv.org/abs/" + paper_idx
