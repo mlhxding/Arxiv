@@ -113,4 +113,86 @@ def get_article_info(paper_idx: str) -> Article:
 
     abstract_url = "https://arxiv.org/abs/" + paper_idx
 
+    html = requests.get(url).text
+
+    assert html is not None
+
+    soup = BeautifulSoup(html, 'html.parser')
+
+    # locate content tag
+    content_tag = soup.find('div', id="content-inner")
+
+    # submit date
+    try:
+        datetime_tag = content_tag.find('div', class_="dateline")
+        submitDate = datetime_tag.get_text().strip().replace("[Submitted on ", "").replace(']', '')
+    except Exception as e:
+        submitDate = None
+
+    # title
+    try:
+        title_tag = content_tag.find('h1', class_="title mathjax")
+        title = title_tag.get_text().replace('Title:','')
+    except Exception as e:
+        title = None
     
+    # author list
+    author_list = []
+    try:
+        authors_tag = content_tag.find('div', class_="authors")
+        for a_tag in authors_tag.find_all('a'):
+            author_list.append(a_tag.get_text())
+    except Exception as e:
+        pass
+
+    # abstract
+    try:
+        abs_tag = content_tag.find('blockquote', class_="abstract mathjax")
+        abstract = abs_tag.get_text().strip().replace("Abstract:  ", '')
+    except Exception as e:
+        abstract = None
+
+    # comments
+    try:
+        comments_tag = content_tag.find('td', class_="tablecell comments mathjax")
+        comments = comments_tag.get_text()
+    except Exception as e:
+        comments = None
+
+    # subject list
+    subject_list = []
+    try:
+        subject_tag = content_tag.find('td', class_="tablecell subjects")
+        subjects = subject_tag.get_text().strip()
+        subject_list = split_subjects(subjects)
+    except Exception as e:
+        pass
+    
+    return Article(
+        paper_id=paper_idx,
+        title=title,
+        authors=author_list,
+        abstract=abstract,
+        submitDate=submitDate,
+        subjects = subject_list,
+        comments = comments
+    )
+
+@staticmethod
+def split_subjects(subjects):
+    """split subject str to list, keep shorthand only
+
+    Args:
+        subjects: str, for example: "Computation and Language (cs.CL); Information Retrieval (cs.IR)"
+
+    Returns:
+        subject_list: List of str, only store shorthand.
+        For example:
+        ["cs.CL", "cs.IR"]
+    """
+
+    subject_list = []
+    for subject in subjects.split(';'):
+        subject_list.append(re.search('\w+\.\w+', subject)[0])
+    
+    return subject_list
