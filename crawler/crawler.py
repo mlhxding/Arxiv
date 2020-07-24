@@ -13,7 +13,7 @@ SUBJECT_MAP = {
     "cs.CE": "Computational Engineering, Finance, and Science",
     "cs.CG": "Computational Geometry",
     "cs.GT": "Computer Science and Game Theory",
-    "cs.CV": "omputer Vision and Pattern Recognition",
+    "cs.CV": "Computer Vision and Pattern Recognition",
     "cs.CY": "Computers and Society",
     "cs.CR": "Cryptography and Security",
     "cs.DS": "Data Structures and Algorithms",
@@ -167,6 +167,13 @@ def get_article_info(paper_idx: str) -> Article:
         subject_list = split_subjects(subjects)
     except Exception as e:
         pass
+
+    # Journal ref
+    try:
+        jref_tag = content_tag.find('td', class_="tablecell jref")
+        jref = jref_tag.get_text()
+    except Exception as e:
+        jref = None
     
     return Article(
         paper_id=paper_idx,
@@ -175,7 +182,8 @@ def get_article_info(paper_idx: str) -> Article:
         abstract=abstract,
         submitDate=submitDate,
         subjects = subject_list,
-        comments = comments
+        comments = comments,
+        journal_ref=jref
     )
 
 @staticmethod
