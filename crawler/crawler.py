@@ -186,7 +186,6 @@ def get_article_info(paper_idx: str) -> Article:
         journal_ref=jref
     )
 
-@staticmethod
 def split_subjects(subjects):
     """split subject str to list, keep shorthand only
 
