@@ -1,5 +1,6 @@
 from typing import List
 import re
+import json
 from datetime import datetime
 from arxiv_exception import ArticleFormatException
 
@@ -97,3 +98,20 @@ class Article(object):
             return datetime(year=int(year_str), month=MONTH_MAP[month_str], day=int(day_str))
         else:
             return None
+
+    def to_json(self):
+        """convert Article class to Json object
+
+        Returns:
+            article_json: json object of article
+        """
+        return json.dumps({
+                "paper_idx": self.paper_id,
+                "title": self.title,
+                "author": self.authors,
+                "abstract": self.abstract,
+                "submitDate": self.submitDate,
+                "subjects": self.subjects,
+                "comments": self.comments,
+                "journal_ref": self.journal_ref}, indent=4
+        )
