@@ -113,7 +113,7 @@ def get_article_info(paper_idx: str) -> Article:
 
     abstract_url = "https://arxiv.org/abs/" + paper_idx
 
-    html = requests.get(url).text
+    html = requests.get(abstract_url).text
 
     assert html is not None
 

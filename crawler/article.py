@@ -49,7 +49,7 @@ class Article(object):
         self.title = title
         self.authors = authors
         self.abstract = abstract
-        self.submitDate = formatSubmitDate(submitDate)
+        self.submitDate = Article.formatSubmitDate(submitDate)
         self.comments = comments
         self.subjects = subjects
         self.journal_ref = journal_ref
@@ -73,12 +73,12 @@ class Article(object):
             raise ArticleFormatException("Abstract")
 
         # validate subjects params
-        if len(self.subjects) <= 1:
+        if len(self.subjects) < 1:
             raise ArticleFormatException("Subjects")
 
         # validate article id match submit date
-        idx_year = int(self.paper_id[:4])
-        idx_month = int(self.paper_id[-5:])
+        idx_year = int("20" + self.paper_id[:4][:2])
+        idx_month = int(self.paper_id[:4][-2:])
 
         if idx_month != self.submitDate.month or idx_year != self.submitDate.year:
             raise ArticleFormatException("SubmitDate")
@@ -95,7 +95,7 @@ class Article(object):
 
         if len(submitdate.split()) == 3:
             [day_str, month_str, year_str] = submitdate.split()
-            return datetime(year=int(year_str), month=MONTH_MAP[month_str], day=int(day_str))
+            return datetime(year=int("20" + year_str), month=MONTH_MAP[month_str], day=int(day_str))
         else:
             return None
 
@@ -110,7 +110,7 @@ class Article(object):
                 "title": self.title,
                 "author": self.authors,
                 "abstract": self.abstract,
-                "submitDate": self.submitDate,
+                "submitDate": self.submitDate.strftime("%Y-%m-%d"),
                 "subjects": self.subjects,
                 "comments": self.comments,
                 "journal_ref": self.journal_ref}, indent=4
