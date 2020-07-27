@@ -122,7 +122,11 @@ def get_article_info(paper_idx: str) -> Article:
     # locate content tag
     content_tag = soup.find('div', id="content-inner")
 
-    # submit date
+    """submit date will be in two ways:
+    For example:
+    (1) [Submitted on 18 Jul 2020]
+    (2) [Submitted on 21 Jul 2020 (v1), last revised 23 Jul 2020 (this version, v2)]
+    """
     try:
         datetime_tag = content_tag.find('div', class_="dateline")
         submitDateText = datetime_tag.get_text().strip()
