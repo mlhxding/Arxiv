@@ -125,7 +125,9 @@ def get_article_info(paper_idx: str) -> Article:
     # submit date
     try:
         datetime_tag = content_tag.find('div', class_="dateline")
-        submitDate = datetime_tag.get_text().strip().replace("[Submitted on ", "").replace(']', '')
+        submitDateText = datetime_tag.get_text().strip()
+        submitDateText = re.search("Submitted on \d{1,2} \w{3,4} \d{4}", submitDateText)[0]
+        submitDate = submitDateText.replace("Submitted on ", "")
     except Exception as e:
         submitDate = None
 
