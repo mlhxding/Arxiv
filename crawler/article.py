@@ -95,7 +95,7 @@ class Article(object):
 
         if len(submitdate.split()) == 3:
             [day_str, month_str, year_str] = submitdate.split()
-            return datetime(year=int("20" + year_str), month=MONTH_MAP[month_str], day=int(day_str))
+            return datetime(year=int(year_str), month=MONTH_MAP[month_str], day=int(day_str))
         else:
             return None
 
